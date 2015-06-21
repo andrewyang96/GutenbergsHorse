@@ -9,6 +9,8 @@ import re
 import json
 import cPickle
 
+BASEPATH = os.path.dirname(os.path.realpath(__file__))
+
 def downloadText(textID):
     print "Downloading", textID
     text = strip_headers(load_etext(textID)).strip()
@@ -63,15 +65,15 @@ def tokenizeText(splitter, text):
 def downloadMain(textIDs=MOSTPOPULAR):
     splitter = PunktSentenceTokenizer()
     manifest = {}
-    if not os.path.exists(os.path.join(os.getcwd(), "data")):
+    if not os.path.exists(os.path.join(BASEPATH, "data")):
         print "Making data directory"
-        os.mkdir(os.path.join(os.getcwd(), "data"))
+        os.mkdir(os.path.join(BASEPATH, "data"))
     for textID in textIDs:
         try:
             text = downloadText(textID)
             sents = tokenizeText(splitter, text)
             manifest[textID] = len(sents)
-            with open(os.path.join(os.getcwd(), "data", str(textID) + ".bin"), "w") as f:
+            with open(os.path.join(BASEPATH, "data", str(textID) + ".bin"), "w") as f:
                 print "Dumping", textID
                 cPickle.dump(sents, f)
         except Exception, e:
@@ -83,7 +85,7 @@ def downloadMain(textIDs=MOSTPOPULAR):
                 pass
     print "Here's the manifest:"
     print manifest
-    with open(os.path.join(os.getcwd(), "manifest.json"), "w") as f:
+    with open(os.path.join(BASEPATH, "manifest.json"), "w") as f:
         json.dump(manifest, f)
 
 def runTestcases():
