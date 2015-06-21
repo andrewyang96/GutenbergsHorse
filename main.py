@@ -4,6 +4,11 @@ import datetime
  
 if __name__ == "__main__":
     twitter = TwitterAPI()
-    sentence = chooseSentence()
+    textID, sentence = chooseSentence()
     twitter.tweet(sentence)
-    print "Tweeted:", sentence, "at", datetime.datetime.now()
+    print "Using tweet from", textID
+    print "Sentence:"
+    print sentence
+    print "Timestamp:"
+    print datetime.datetime.now()
+    print "-"*60
