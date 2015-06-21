@@ -9,7 +9,7 @@ import cPickle
 
 def downloadText(textID):
     print "Downloading", textID
-    text = strip_headers(load_etext(i)).strip()
+    text = strip_headers(load_etext(textID)).strip()
     return text
 
 def countWords(sentence):
@@ -76,7 +76,7 @@ def downloadMain(textIDs=MOSTPOPULAR):
                 del manifest[textID]
             except KeyError:
                 pass
-    with open(os.path.join(os.getcwd(), "mainfest.json")) as f:
+    with open(os.path.join(os.getcwd(), "manifest.json"), "w") as f:
         json.dump(manifest, "manifest.json")
 
 def runTestcases():
