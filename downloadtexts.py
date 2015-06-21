@@ -65,7 +65,7 @@ def downloadMain(textIDs=MOSTPOPULAR):
         try:
             text = downloadText(textID)
             sents = tokenizeText(splitter, text)
-            mainfest[textID] = len(sents)
+            manifest[textID] = len(sents)
             with open(os.path.join(os.getcwd(), "data", textID + ".bin")) as f:
                 print "Dumping", textID
                 cPickle.dump(sents, f)
