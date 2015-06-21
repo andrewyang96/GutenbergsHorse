@@ -63,7 +63,9 @@ def tokenizeText(splitter, text):
 def downloadMain(textIDs=MOSTPOPULAR):
     splitter = PunktSentenceTokenizer()
     manifest = {}
-    os.mkdir(os.path.join(os.getcwd(), "data"))
+    if not os.path.exists(os.path.join(os.getcwd(), "data")):
+        print "Making data directory"
+        os.mkdir(os.path.join(os.getcwd(), "data"))
     for textID in textIDs:
         try:
             text = downloadText(textID)
