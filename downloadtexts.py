@@ -4,15 +4,13 @@ from nltk.tokenize.punkt import PunktSentenceTokenizer
 from mostpopular import MOSTPOPULAR
 import os
 import re
+import json
 import cPickle
 
-def downloadTexts(textIDs):
-    d = []
-    for i in textIDs:
-        print "Downloading", i
-        text = strip_headers(load_etext(i)).strip()
-        d.append(text)
-    return d
+def downloadText(textID):
+    print "Downloading", textID
+    text = strip_headers(load_etext(i)).strip()
+    return text
 
 def countWords(sentence):
     return len(re.findall(r'\w+', sentence))
@@ -60,23 +58,26 @@ def tokenizeText(splitter, text):
     # filter out sentences that exceed 140 characters
     return [cleanupSentence(sentence) for sentence in filter(filterSentenceFunc, initList)]
 
-def tokenizeTexts(texts):
+def downloadMain(textIDs=MOSTPOPULAR):
     splitter = PunktSentenceTokenizer()
-    ret = []
-    for text in texts:
-        sentences = tokenizeText(splitter, text)
-        ret.append(sentences)
-    return ret
-
-def retrieveSentences():
-    texts = downloadTexts(MOSTPOPULAR)
-    return tokenizeTexts(texts)
-
-def downloadTexts():
-    sents = retrieveSentences()
-    with open(os.path.join(os.getcwd(), "gutenbergpickle.bin"), 'w') as f:
-        print "Dumping to file"
-        cPickle.dump(sents, f)
+    manifest = {}
+    for textID in textIDs:
+        try:
+            text = downloadText(textID)
+            sents = tokenizeText(splitter, text)
+            mainfest[textID] = len(sents)
+            with open(os.path.join(os.getcwd(), "data", textID + ".bin")) as f:
+                print "Dumping", textID
+                cPickle.dump(sents, f)
+        except Exception, e:
+            print "Error:"
+            print e
+            try: # rollback changes to manifest
+                del manifest[textID]
+            except KeyError:
+                pass
+    with open(os.path.join(os.getcwd(), "mainfest.json")) as f:
+        json.dump(manifest, "manifest.json")
 
 def runTestcases():
     cases = [
@@ -99,5 +100,5 @@ def runTestcases():
         print
 
 if __name__ == "__main__":
-    print "Running test cases for cleanupSentence. downloadTexts() runs the download utility."
+    print "Running test cases for cleanupSentence. downloadMain() runs the download utility."
     runTestcases()

@@ -138,7 +138,7 @@ MOSTPOPULAR = [
     37134,  # The Elements of Style
     8492,   # The King in Yellow
     15399,  # The Interesting Narrative of the Life of Olaudah Equiano, or Gustavus Vassa, the African
-    786,    # Hard Times
+    #786,   # Hard Times (Download URI not supported)
     147,    # Common Sense
     1727,   # The Odyssey
     15250,  # Myths and Legends of China
