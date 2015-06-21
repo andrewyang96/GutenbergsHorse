@@ -2,6 +2,8 @@ from gutenberg.acquire import load_etext
 from gutenberg.cleanup import strip_headers
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from mostpopular import MOSTPOPULAR
+import sys
+import traceback
 import os
 import re
 import json
@@ -61,23 +63,26 @@ def tokenizeText(splitter, text):
 def downloadMain(textIDs=MOSTPOPULAR):
     splitter = PunktSentenceTokenizer()
     manifest = {}
+    os.mkdir(os.path.join(os.getcwd(), "data"))
     for textID in textIDs:
         try:
             text = downloadText(textID)
             sents = tokenizeText(splitter, text)
             manifest[textID] = len(sents)
-            with open(os.path.join(os.getcwd(), "data", textID + ".bin")) as f:
+            with open(os.path.join(os.getcwd(), "data", str(textID) + ".bin"), "w") as f:
                 print "Dumping", textID
                 cPickle.dump(sents, f)
         except Exception, e:
             print "Error:"
-            print e
+            traceback.print_exc(file=sys.stdout)
             try: # rollback changes to manifest
                 del manifest[textID]
             except KeyError:
                 pass
+    print "Here's the manifest:"
+    print manifest
     with open(os.path.join(os.getcwd(), "manifest.json"), "w") as f:
-        json.dump(manifest, "manifest.json")
+        json.dump(manifest, f)
 
 def runTestcases():
     cases = [
