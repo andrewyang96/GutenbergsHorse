@@ -1,6 +1,6 @@
 from gutenberg.acquire import load_etext
 from gutenberg.cleanup import strip_headers
-from nltk.tokenize.punkt import PunktSentenceTokenizer
+from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
 from mostpopular import MOSTPOPULAR
 import sys
 import traceback
@@ -63,7 +63,9 @@ def tokenizeText(splitter, text):
     return [cleanupSentence(sentence) for sentence in filter(filterSentenceFunc, initList)]
 
 def downloadMain(textIDs=MOSTPOPULAR):
-    splitter = PunktSentenceTokenizer()
+    punkt_param = PunktParameters()
+    punkt_param.abbrev_types = set(['dr', 'vs', 'mr', 'mrs', 'prof', 'inc'])
+    splitter = PunktSentenceTokenizer(punkt_param)
     manifest = {}
     if not os.path.exists(os.path.join(BASEPATH, "data")):
         print "Making data directory"
@@ -99,7 +101,8 @@ def runTestcases():
         "Shouldn't change:",
         "But have I now seen Death?",
         '"I am called," said Andrea.',
-        '"Well," said Andrea, "admitting your love, why do you want me to breakfast with you?"'
+        '"Well," said Andrea, "admitting your love, why do you want me to breakfast with you?"',
+        '"Oh, Mrs. Churchill; every body knows Mrs. Churchill," replied Isabella: "and I am sure I never think of that poor young man without the greatest compassion.',
     ]
     for case in cases:
         print "Original"
