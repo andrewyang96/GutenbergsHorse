@@ -27,13 +27,21 @@ def filterSentenceFunc(sentence):
 
 def findFirstLettersIdx(sentence):
     letters = re.findall(r'[a-zA-Z]', sentence)
-    return sentence.find(letters[0])
+    if len(letters) == 0:
+        # return None if no letters can be found
+        return None
+    else:
+        return sentence.find(letters[0])
 
 def ensureFirstLetterUpper(sentence):
     flIdx = findFirstLettersIdx(sentence)
-    s = list(sentence)
-    s[flIdx] = s[flIdx].upper()
-    return ''.join(s)
+    if flIdx is None:
+        # return None if no letters can be found
+        return None
+    else:
+        s = list(sentence)
+        s[flIdx] = s[flIdx].upper()
+        return ''.join(s)
 
 def cleanupSentence(sentence):
     # Clean up sentence by doing the following:
@@ -54,13 +62,18 @@ def cleanupSentence(sentence):
         sentence = "[" + sentence
     # 4. Capitalize the first letter of the sentence (may not be at index 0).
     sentence = ensureFirstLetterUpper(sentence)
-    return sentence
+    if sentence is None or len(sentence) > 140:
+        # None is returned if sentence has no letters or it exceeds 140 characters
+        return None
+    else:
+        return sentence
 
 def tokenizeText(splitter, text):
     initList = [unicode(sentence).strip() for sentence in splitter.tokenize(text)]
     # filter out sentences that are less than two words long
     # filter out sentences that exceed 140 characters
-    return [cleanupSentence(sentence) for sentence in filter(filterSentenceFunc, initList)]
+    cleanedUpSentences = [cleanupSentence(sentence) for sentence in filter(filterSentenceFunc, initList)]
+    return [sentence for sentence in cleanedUpSentences if sentence is not None]
 
 def downloadMain(textIDs=MOSTPOPULAR):
     punkt_param = PunktParameters()
