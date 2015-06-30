@@ -10,6 +10,7 @@ import json
 import cPickle
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
+ABBREVS = set(['dr', 'vs', 'mr', 'mrs', 'prof', 'inc'])
 
 def downloadText(textID):
     print "Downloading", textID
@@ -66,7 +67,17 @@ def cleanupSentence(sentence):
         # None is returned if sentence has no letters or it exceeds 140 characters
         return None
     else:
-        return sentence
+        # 5. If a dangling abbreviation still occurs, then just return None.
+        if sentence.strip().split(" ")[-1][:-1].lower() in ABBREVS:
+            print "Sentence still has dangling abbreviation:", sentence
+            return None
+        else:
+            return sentence
+
+def getSplitter():
+    punkt_param = PunktParameters()
+    punkt_param.abbrev_types = ABBREVS
+    return PunktSentenceTokenizer(punkt_param)
 
 def tokenizeText(splitter, text):
     initList = [unicode(sentence).strip() for sentence in splitter.tokenize(text)]
@@ -76,9 +87,7 @@ def tokenizeText(splitter, text):
     return [sentence for sentence in cleanedUpSentences if sentence is not None]
 
 def downloadMain(textIDs=MOSTPOPULAR):
-    punkt_param = PunktParameters()
-    punkt_param.abbrev_types = set(['dr', 'vs', 'mr', 'mrs', 'prof', 'inc'])
-    splitter = PunktSentenceTokenizer(punkt_param)
+    splitter = getSplitter()
     manifest = {}
     if not os.path.exists(os.path.join(BASEPATH, "data")):
         print "Making data directory"
