@@ -38,9 +38,9 @@ def ensureFirstLetterUpper(sentence):
 def cleanupSentence(sentence):
     # Clean up sentence by doing the following:
     # 1. Resolve dangling quotation marks at either the front or end of the sentence.
-    if sentence[0] == '"' and '"' not in sentence[1:]:
+    if sentence[0] == '"' and sentence[1:].count('"') % 2 == 0:
         sentence += '"'
-    elif sentence[-1] == '"' and '"' not in sentence[:-1]:
+    elif sentence[-1] == '"' and sentence[:-1].count('"') % 2 == 0:
         sentence = '"' + sentence
     # 2. Resolve dangling parenthesis at either the front or end of the sentence.
     if "(" in sentence and ")" not in sentence:
