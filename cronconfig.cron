@@ -1,0 +1,2 @@
+SHELL=/bin/bash
+0,15,30,45 * * * * /usr/bin/python /root/gutenbergshorse/main.py >> /tmp/gutenbergshorse.log

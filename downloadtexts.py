@@ -136,3 +136,5 @@ def runTestcases():
 if __name__ == "__main__":
     print "Running test cases for cleanupSentence. downloadMain() runs the download utility."
     runTestcases()
+    if raw_input("Download texts? (y or n) ").lower() == 'y':
+        downloadMain()
